@@ -1,25 +1,14 @@
-
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import { ServicoFormData } from "@/hooks/useServicoForm";
 import { ProfissionaisCheckboxList } from "./ProfissionaisCheckboxList";
+import { useCategorias } from "@/hooks/useCategorias";
 
 interface ServicoFormFieldsProps {
   control: Control<ServicoFormData>;
 }
-
-const categorias = [
-  "Cabelo",
-  "Unhas",
-  "Barba",
-  "Tratamentos Faciais",
-  "Massagens",
-  "Depilação",
-  "Sobrancelhas",
-  "Outros"
-];
 
 const profissionaisDisponiveis = [
   "Maria Silva",
@@ -30,6 +19,9 @@ const profissionaisDisponiveis = [
 ];
 
 export function ServicoFormFields({ control }: ServicoFormFieldsProps) {
+  const { getCategoriaNomes } = useCategorias();
+  const categorias = getCategoriaNomes();
+
   return (
     <>
       <FormField
