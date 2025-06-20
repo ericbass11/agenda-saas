@@ -43,32 +43,19 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: "Básico",
-      price: "29,90",
-      priceId: "price_basic", // Será substituído pelo ID real do Stripe
-      description: "Perfeito para pequenos negócios",
-      features: [
-        "Até 100 agendamentos/mês",
-        "2 profissionais",
-        "Notificações WhatsApp",
-        "Dashboard básico",
-        "Suporte por email"
-      ],
-      popular: false
-    },
-    {
-      name: "Premium",
-      price: "59,90",
-      priceId: "price_premium", // Será substituído pelo ID real do Stripe
-      description: "Para negócios em crescimento",
+      name: "Agendamento Fácil",
+      price: "69,90",
+      priceId: "price_agendamento_facil", // Será substituído pelo ID real do Stripe
+      description: "Solução completa para seu negócio",
       features: [
         "Agendamentos ilimitados",
         "Profissionais ilimitados",
-        "Notificações WhatsApp",
-        "Dashboard avançado",
+        "Notificações WhatsApp automáticas",
+        "Dashboard executivo completo",
         "Relatórios detalhados",
-        "Suporte prioritário",
-        "Integração com redes sociais"
+        "Gestão de clientes",
+        "Link de agendamento personalizado",
+        "Suporte prioritário"
       ],
       popular: true
     }
@@ -79,32 +66,24 @@ const Pricing = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Escolha o plano ideal para seu negócio
+            Simplifique seus agendamentos
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Simplifique seus agendamentos e cresça seu negócio com nossa plataforma completa
+            Tenha controle total do seu negócio com nossa plataforma completa de agendamentos
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="max-w-md mx-auto">
           {plans.map((plan) => (
-            <Card key={plan.name} className={`relative ${plan.popular ? 'border-primary shadow-xl scale-105' : ''}`}>
-              {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
-                  <Star className="w-3 h-3 mr-1" />
-                  Mais Popular
-                </Badge>
-              )}
+            <Card key={plan.name} className="relative border-primary shadow-xl">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
+                <Star className="w-3 h-3 mr-1" />
+                Plano Completo
+              </Badge>
               
               <CardHeader className="text-center pb-6">
                 <div className="flex items-center justify-center mb-4">
-                  {plan.popular ? (
-                    <Crown className="w-8 h-8 text-primary" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-primary" />
-                    </div>
-                  )}
+                  <Crown className="w-8 h-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                 <div className="mt-4">
@@ -127,7 +106,6 @@ const Pricing = () => {
                 <Button 
                   className="w-full" 
                   size="lg"
-                  variant={plan.popular ? "default" : "outline"}
                   onClick={() => handleSubscribe(plan.priceId)}
                 >
                   {user ? 'Assinar Agora' : 'Faça Login para Assinar'}
@@ -139,7 +117,10 @@ const Pricing = () => {
 
         <div className="text-center mt-12">
           <p className="text-gray-600">
-            Todos os planos incluem 7 dias grátis. Cancele quando quiser.
+            Teste grátis por 7 dias. Cancele quando quiser.
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Sem compromisso. Sem taxas de cancelamento.
           </p>
         </div>
       </div>
