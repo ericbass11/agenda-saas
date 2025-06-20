@@ -12,6 +12,7 @@ import Profissionais from "./pages/Profissionais";
 import Servicos from "./pages/Servicos";
 import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
+import AgendamentoCliente from "./pages/AgendamentoCliente";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/agendamento/:estabelecimentoId" element={<AgendamentoCliente />} />
           <Route path="/dashboard" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
           </Route>

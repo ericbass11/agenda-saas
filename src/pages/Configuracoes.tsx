@@ -6,6 +6,7 @@ import { HorariosFuncionamento } from "@/components/configuracoes/HorariosFuncio
 import { NotificacoesWhatsApp } from "@/components/configuracoes/NotificacoesWhatsApp";
 import { ConfiguracoesAgendamento } from "@/components/configuracoes/ConfiguracoesAgendamento";
 import { BackupExportacao } from "@/components/configuracoes/BackupExportacao";
+import { LinkAgendamento } from "@/components/configuracoes/LinkAgendamento";
 
 export default function Configuracoes() {
   return (
@@ -16,6 +17,8 @@ export default function Configuracoes() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <LinkAgendamento />
+        
         <Card>
           <CardHeader>
             <CardTitle>Categorias de Serviços</CardTitle>
