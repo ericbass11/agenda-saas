@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 import { Cliente } from "@/hooks/useAgendamentoCliente";
 
 const loginSchema = z.object({
@@ -18,24 +19,25 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess, onError }: LoginFormProps) {
+  const { signIn } = useAuth();
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
 
   const handleSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await signIn(data.email, data.senha);
       
       const cliente: Cliente = {
-        nome: "Cliente Teste",
+        nome: "Cliente",
         email: data.email,
-        telefone: "(11) 99999-1111",
-        whatsapp: "(11) 99999-1111",
+        telefone: "",
+        whatsapp: "",
       };
 
       onSuccess(cliente);
-    } catch {
-      onError("Email ou senha incorretos");
+    } catch (error: any) {
+      onError(error.message || "Email ou senha incorretos");
     }
   };
 
@@ -69,8 +71,8 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full">
-        Entrar
+      <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+        {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
       </Button>
     </form>
   );

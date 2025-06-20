@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 import { Cliente } from "@/hooks/useAgendamentoCliente";
 
 const cadastroSchema = z.object({
@@ -21,13 +22,14 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ onSuccess, onError }: SignupFormProps) {
+  const { signUp } = useAuth();
   const form = useForm({
     resolver: zodResolver(cadastroSchema),
   });
 
   const handleSubmit = async (data: z.infer<typeof cadastroSchema>) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await signUp(data.email, data.senha);
       
       const cliente: Cliente = {
         nome: data.nome,
@@ -37,8 +39,8 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
       };
 
       onSuccess(cliente);
-    } catch {
-      onError("Tente novamente mais tarde");
+    } catch (error: any) {
+      onError(error.message || "Erro ao criar conta. Tente novamente.");
     }
   };
 
@@ -113,8 +115,8 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full">
-        Cadastrar
+      <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+        {form.formState.isSubmitting ? "Cadastrando..." : "Cadastrar"}
       </Button>
     </form>
   );
