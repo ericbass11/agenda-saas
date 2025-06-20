@@ -1,6 +1,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CategoriasManager } from "@/components/configuracoes/CategoriasManager";
+import { CategoriasModal } from "@/components/configuracoes/CategoriasModal";
+import { InformacoesEstabelecimento } from "@/components/configuracoes/InformacoesEstabelecimento";
+import { HorariosFuncionamento } from "@/components/configuracoes/HorariosFuncionamento";
+import { NotificacoesWhatsApp } from "@/components/configuracoes/NotificacoesWhatsApp";
+import { ConfiguracoesAgendamento } from "@/components/configuracoes/ConfiguracoesAgendamento";
+import { BackupExportacao } from "@/components/configuracoes/BackupExportacao";
 
 export default function Configuracoes() {
   return (
@@ -11,52 +16,23 @@ export default function Configuracoes() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <CategoriasManager />
+        <Card>
+          <CardHeader>
+            <CardTitle>Categorias de Serviços</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">
+              Gerencie as categorias de serviços do seu estabelecimento.
+            </p>
+            <CategoriasModal />
+          </CardContent>
+        </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Informações do Estabelecimento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">Em desenvolvimento...</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Horários de Funcionamento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">Em desenvolvimento...</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Notificações WhatsApp</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">Em desenvolvimento...</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Configurações de Agendamento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">Em desenvolvimento...</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Backup e Exportação</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">Em desenvolvimento...</p>
-          </CardContent>
-        </Card>
+        <InformacoesEstabelecimento />
+        <HorariosFuncionamento />
+        <NotificacoesWhatsApp />
+        <ConfiguracoesAgendamento />
+        <BackupExportacao />
       </div>
     </div>
   );
