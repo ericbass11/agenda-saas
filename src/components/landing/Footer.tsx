@@ -1,7 +1,5 @@
-
 export const Footer = () => {
-  return (
-    <footer className="bg-gray-900 text-white py-12">
+  return <footer className="bg-gray-900 text-white py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
@@ -47,9 +45,7 @@ export const Footer = () => {
         <hr className="border-gray-800 my-8" />
         
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400">
-            © 2024 Agendamento Fácil. Todos os direitos reservados.
-          </p>
+          <p className="text-gray-400">© 2025 Agendamento Fácil. Todos os direitos reservados.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
               Termos de Uso
@@ -60,6 +56,5 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
