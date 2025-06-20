@@ -52,7 +52,7 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         />
         {form.formState.errors.nome && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.nome?.message}
+            {String(form.formState.errors.nome?.message || "")}
           </p>
         )}
       </div>
@@ -66,7 +66,7 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         />
         {form.formState.errors.email && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.email?.message}
+            {String(form.formState.errors.email?.message || "")}
           </p>
         )}
       </div>
@@ -80,7 +80,7 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         />
         {form.formState.errors.telefone && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.telefone?.message}
+            {String(form.formState.errors.telefone?.message || "")}
           </p>
         )}
       </div>
@@ -94,7 +94,7 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         />
         {form.formState.errors.whatsapp && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.whatsapp?.message}
+            {String(form.formState.errors.whatsapp?.message || "")}
           </p>
         )}
       </div>
@@ -108,7 +108,7 @@ export function SignupForm({ onSuccess, onError }: SignupFormProps) {
         />
         {form.formState.errors.senha && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.senha?.message}
+            {String(form.formState.errors.senha?.message || "")}
           </p>
         )}
       </div>
