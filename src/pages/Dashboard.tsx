@@ -1,6 +1,25 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Users, DollarSign, Clock } from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
+
+const agendamentosData = [
+  { dia: "Seg", agendamentos: 12 },
+  { dia: "Ter", agendamentos: 18 },
+  { dia: "Qua", agendamentos: 15 },
+  { dia: "Qui", agendamentos: 24 },
+  { dia: "Sex", agendamentos: 20 },
+  { dia: "Sáb", agendamentos: 28 },
+  { dia: "Dom", agendamentos: 8 },
+];
+
+const chartConfig = {
+  agendamentos: {
+    label: "Agendamentos",
+    color: "#3b82f6",
+  },
+};
 
 export default function Dashboard() {
   return (
@@ -80,9 +99,15 @@ export default function Dashboard() {
             <CardTitle>Agendamentos da Semana</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-500">
-              Gráfico de agendamentos será implementado aqui
-            </div>
+            <ChartContainer config={chartConfig} className="h-64">
+              <BarChart data={agendamentosData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="dia" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="agendamentos" fill="var(--color-agendamentos)" radius={4} />
+              </BarChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 

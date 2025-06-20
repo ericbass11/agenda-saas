@@ -2,6 +2,46 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, TrendingUp, Users, Calendar } from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+
+const faturamentoData = [
+  { mes: "Jan", valor: 8500 },
+  { mes: "Fev", valor: 9200 },
+  { mes: "Mar", valor: 11000 },
+  { mes: "Abr", valor: 10800 },
+  { mes: "Mai", valor: 12450 },
+  { mes: "Jun", valor: 13200 },
+];
+
+const ocupacaoData = [
+  { dia: "Seg", ocupacao: 75 },
+  { dia: "Ter", ocupacao: 82 },
+  { dia: "Qua", ocupacao: 68 },
+  { dia: "Qui", ocupacao: 95 },
+  { dia: "Sex", ocupacao: 88 },
+  { dia: "Sáb", ocupacao: 98 },
+  { dia: "Dom", ocupacao: 45 },
+];
+
+const servicosData = [
+  { servico: "Corte Feminino", quantidade: 85, fill: "#8b5cf6" },
+  { servico: "Manicure", quantidade: 72, fill: "#06b6d4" },
+  { servico: "Corte Masculino", quantidade: 58, fill: "#10b981" },
+  { servico: "Escova", quantidade: 45, fill: "#f59e0b" },
+  { servico: "Barba", quantidade: 42, fill: "#ef4444" },
+];
+
+const chartConfig = {
+  valor: {
+    label: "Faturamento",
+    color: "#10b981",
+  },
+  ocupacao: {
+    label: "Taxa de Ocupação",
+    color: "#8b5cf6",
+  },
+};
 
 export default function Relatorios() {
   return (
@@ -26,9 +66,24 @@ export default function Relatorios() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-500">
-              Gráfico de faturamento será implementado aqui
-            </div>
+            <ChartContainer config={chartConfig} className="h-64">
+              <LineChart data={faturamentoData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" />
+                <YAxis />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />}
+                  formatter={(value) => [`R$ ${value.toLocaleString()}`, "Faturamento"]}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="valor" 
+                  stroke="var(--color-valor)" 
+                  strokeWidth={3}
+                  dot={{ fill: "var(--color-valor)", strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -66,28 +121,23 @@ export default function Relatorios() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {[
-                { servico: "Corte Feminino", quantidade: 85, percentual: 28 },
-                { servico: "Manicure", quantidade: 72, percentual: 24 },
-                { servico: "Corte Masculino", quantidade: 58, percentual: 19 },
-                { servico: "Escova", quantidade: 45, percentual: 15 },
-                { servico: "Barba", quantidade: 42, percentual: 14 },
-              ].map((item, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">{item.servico}</span>
-                    <span className="text-sm text-gray-600">{item.quantidade} vezes</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-purple-600 h-2 rounded-full" 
-                      style={{ width: `${item.percentual}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ChartContainer config={chartConfig} className="h-64">
+              <PieChart>
+                <Pie
+                  data={servicosData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  dataKey="quantidade"
+                  label={({ servico, quantidade }) => `${servico}: ${quantidade}`}
+                >
+                  {servicosData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -96,9 +146,22 @@ export default function Relatorios() {
             <CardTitle>Taxa de Ocupação Semanal</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-gray-500">
-              Gráfico de ocupação será implementado aqui
-            </div>
+            <ChartContainer config={chartConfig} className="h-64">
+              <BarChart data={ocupacaoData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="dia" />
+                <YAxis domain={[0, 100]} />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />}
+                  formatter={(value) => [`${value}%`, "Taxa de Ocupação"]}
+                />
+                <Bar 
+                  dataKey="ocupacao" 
+                  fill="var(--color-ocupacao)" 
+                  radius={4}
+                />
+              </BarChart>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
