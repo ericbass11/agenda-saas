@@ -50,7 +50,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         />
         {form.formState.errors.email && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.email.message}
+            {form.formState.errors.email?.message}
           </p>
         )}
       </div>
@@ -64,7 +64,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         />
         {form.formState.errors.senha && (
           <p className="text-sm text-red-500 mt-1">
-            {form.formState.errors.senha.message}
+            {form.formState.errors.senha?.message}
           </p>
         )}
       </div>
