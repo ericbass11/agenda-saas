@@ -26,11 +26,15 @@ export function ViewToggle({ viewMode, onViewModeChange }: ViewToggleProps) {
           onClick={() => onViewModeChange(key)}
           className={`${
             viewMode === key 
-              ? "bg-white shadow-sm" 
+              ? "bg-white shadow-sm text-gray-900" 
               : "hover:bg-gray-200"
           }`}
         >
-          <Icon className="h-4 w-4 mr-1" />
+          <Icon className={`h-4 w-4 mr-1 ${
+            viewMode === key 
+              ? "text-gray-900" 
+              : "text-gray-600"
+          }`} />
           {label}
         </Button>
       ))}
