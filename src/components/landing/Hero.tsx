@@ -1,6 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Hero = () => {
   return (
@@ -24,16 +24,22 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                asChild
               >
-                Crie Sua Conta Grátis Agora!
+                <Link to="/dashboard">
+                  Crie Sua Conta Grátis Agora!
+                </Link>
               </Button>
               
               <Button 
                 variant="outline" 
                 size="lg"
                 className="border-2 border-gray-300 hover:border-blue-500 px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300"
+                asChild
               >
-                Já Tenho Conta - Entrar
+                <Link to="/dashboard">
+                  Já Tenho Conta - Entrar
+                </Link>
               </Button>
             </div>
 

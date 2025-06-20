@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const FinalCTA = () => {
   return (
@@ -30,8 +31,11 @@ export const FinalCTA = () => {
         <Button 
           size="lg"
           className="bg-white text-blue-600 hover:bg-gray-100 px-10 py-4 text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          asChild
         >
-          Crie Sua Conta Grátis e Teste por 7 Dias!
+          <Link to="/dashboard">
+            Crie Sua Conta Grátis e Teste por 7 Dias!
+          </Link>
         </Button>
 
         <p className="text-blue-200 mt-6">
