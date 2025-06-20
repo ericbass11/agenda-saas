@@ -59,6 +59,14 @@ export const useSubscription = () => {
     checkSubscription();
   }, [user]);
 
+  // Auto-refresh subscription status every 30 seconds
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(checkSubscription, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
   return {
     ...subscription,
     refreshSubscription: checkSubscription,

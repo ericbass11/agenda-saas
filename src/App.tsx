@@ -32,42 +32,42 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/agendamento/:estabelecimentoId" element={<AgendamentoCliente />} />
             <Route path="/dashboard" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
               <Route index element={<Dashboard />} />
             </Route>
             <Route path="/agendamentos" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
               <Route index element={<Agendamentos />} />
             </Route>
             <Route path="/profissionais" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
               <Route index element={<Profissionais />} />
             </Route>
             <Route path="/servicos" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
               <Route index element={<Servicos />} />
             </Route>
             <Route path="/relatorios" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
               <Route index element={<Relatorios />} />
             </Route>
             <Route path="/configuracoes" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiresSubscription={true}>
                 <AppLayout />
               </ProtectedRoute>
             }>
