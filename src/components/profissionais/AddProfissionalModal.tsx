@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Upload } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import { useServicos } from "@/hooks/useServicos";
 
 const profissionalSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -22,21 +23,6 @@ const profissionalSchema = z.object({
 
 type ProfissionalForm = z.infer<typeof profissionalSchema>;
 
-const especialidadesDisponiveis = [
-  "Corte Feminino",
-  "Corte Masculino",
-  "Escova",
-  "Coloração",
-  "Mechas",
-  "Progressiva",
-  "Barba",
-  "Manicure",
-  "Pedicure",
-  "Nail Art",
-  "Massagem",
-  "Tratamento Facial"
-];
-
 interface AddProfissionalModalProps {
   onAddProfissional: (profissional: ProfissionalForm & { foto?: string }) => void;
 }
@@ -44,6 +30,7 @@ interface AddProfissionalModalProps {
 export function AddProfissionalModal({ onAddProfissional }: AddProfissionalModalProps) {
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const { getServicosPorCategoria, getServicosAsEspecialidades } = useServicos();
 
   const form = useForm<ProfissionalForm>({
     resolver: zodResolver(profissionalSchema),
@@ -55,6 +42,9 @@ export function AddProfissionalModal({ onAddProfissional }: AddProfissionalModal
       especialidades: [],
     },
   });
+
+  const especialidadesDisponiveis = getServicosAsEspecialidades();
+  const servicosPorCategoria = getServicosPorCategoria();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -177,24 +167,37 @@ export function AddProfissionalModal({ onAddProfissional }: AddProfissionalModal
             />
           </div>
 
-          {/* Especialidades */}
+          {/* Especialidades organizadas por categoria */}
           <div>
-            <Label>Especialidades *</Label>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {especialidadesDisponiveis.map((especialidade) => (
-                <div key={especialidade} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={especialidade}
-                    onCheckedChange={(checked) => 
-                      handleEspecialidadeChange(especialidade, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={especialidade} className="text-sm font-normal">
-                    {especialidade}
-                  </Label>
+            <Label>Serviços que o profissional pode realizar *</Label>
+            <p className="text-sm text-gray-600 mb-3">Selecione todos os serviços que este profissional está habilitado a realizar</p>
+            
+            <div className="space-y-4 max-h-64 overflow-y-auto">
+              {Object.entries(servicosPorCategoria).map(([categoria, servicos]) => (
+                <div key={categoria} className="border rounded-lg p-3">
+                  <h4 className="font-medium text-sm text-blue-700 mb-2">{categoria}</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {servicos.map((servico) => (
+                      <div key={servico.nome} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={servico.nome}
+                          onCheckedChange={(checked) => 
+                            handleEspecialidadeChange(servico.nome, checked as boolean)
+                          }
+                        />
+                        <Label htmlFor={servico.nome} className="text-sm font-normal">
+                          {servico.nome}
+                          <span className="text-xs text-gray-500 ml-2">
+                            ({servico.duracao} - {servico.preco})
+                          </span>
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
+            
             {form.formState.errors.especialidades && (
               <p className="text-sm text-red-600 mt-1">{form.formState.errors.especialidades.message}</p>
             )}

@@ -6,39 +6,23 @@ import { AddServicoModal } from "@/components/servicos/AddServicoModal";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useServicos } from "@/hooks/useServicos";
 
 export default function Servicos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("todas");
-  const [servicos, setServicos] = useState([
-    { 
-      id: 1,
-      categoria: "Cabelo", 
-      servicos: [
-        { id: 1, nome: "Corte Feminino", duracao: "60 min", preco: "R$ 80,00", profissionais: ["Maria Silva", "Ana Costa"], descricao: "Corte personalizado para cabelos femininos" },
-        { id: 2, nome: "Corte Masculino", duracao: "40 min", preco: "R$ 50,00", profissionais: ["João Santos", "Pedro Lima"], descricao: "Corte clássico masculino" },
-        { id: 3, nome: "Escova", duracao: "45 min", preco: "R$ 60,00", profissionais: ["Maria Silva", "Carla Ferreira"] },
-        { id: 4, nome: "Coloração", duracao: "120 min", preco: "R$ 180,00", profissionais: ["Maria Silva", "Ana Costa"] },
-      ]
-    },
-    { 
-      id: 2,
-      categoria: "Unhas", 
-      servicos: [
-        { id: 5, nome: "Manicure", duracao: "45 min", preco: "R$ 35,00", profissionais: ["Ana Costa", "Carla Ferreira"] },
-        { id: 6, nome: "Pedicure", duracao: "60 min", preco: "R$ 45,00", profissionais: ["Ana Costa", "Carla Ferreira"] },
-        { id: 7, nome: "Nail Art", duracao: "30 min", preco: "R$ 25,00", profissionais: ["Ana Costa"] },
-      ]
-    },
-    { 
-      id: 3,
-      categoria: "Barba", 
-      servicos: [
-        { id: 8, nome: "Barba Simples", duracao: "30 min", preco: "R$ 30,00", profissionais: ["João Santos", "Pedro Lima"] },
-        { id: 9, nome: "Barba + Bigode", duracao: "45 min", preco: "R$ 40,00", profissionais: ["João Santos", "Pedro Lima"] },
-      ]
-    },
-  ]);
+  const { servicos, getServicosPorCategoria } = useServicos();
+
+  // Lista de profissionais mockada (em um app real, viria do contexto ou backend)
+  const profissionaisDisponiveis = [
+    "Maria Silva", "João Santos", "Ana Costa", "Pedro Lima", "Carla Ferreira"
+  ];
+
+  // Associação temporária de profissionais a serviços (em um app real, seria dinâmica)
+  const servicosComProfissionais = servicos.map(servico => ({
+    ...servico,
+    profissionais: profissionaisDisponiveis.slice(0, Math.floor(Math.random() * 3) + 1)
+  }));
 
   const handleAddServico = (data: any) => {
     console.log("Novo serviço:", data);
@@ -55,19 +39,8 @@ export default function Servicos() {
     // Aqui você removeria o serviço do estado/banco de dados
   };
 
-  const getAllServicos = () => {
-    return servicos.flatMap(categoria => 
-      categoria.servicos.map(servico => ({
-        ...servico,
-        categoria: categoria.categoria
-      }))
-    );
-  };
-
   const filteredServicos = () => {
-    const allServicos = getAllServicos();
-    
-    return allServicos.filter(servico => {
+    return servicosComProfissionais.filter(servico => {
       const matchesSearch = servico.nome.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = categoryFilter === "todas" || servico.categoria === categoryFilter;
       return matchesSearch && matchesCategory;
