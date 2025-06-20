@@ -21,6 +21,42 @@ export default function Configuracoes() {
             <p className="text-gray-600">Em desenvolvimento...</p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Horários de Funcionamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Em desenvolvimento...</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Notificações WhatsApp</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Em desenvolvimento...</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Configurações de Agendamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Em desenvolvimento...</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Backup e Exportação</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Em desenvolvimento...</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
