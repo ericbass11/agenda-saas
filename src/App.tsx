@@ -20,63 +20,67 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Index />} />
+    <Route path="/pricing" element={<Pricing />} />
+    <Route path="/agendamento/:estabelecimentoId" element={<AgendamentoCliente />} />
+    <Route path="/dashboard" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Dashboard />} />
+    </Route>
+    <Route path="/agendamentos" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Agendamentos />} />
+    </Route>
+    <Route path="/profissionais" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Profissionais />} />
+    </Route>
+    <Route path="/servicos" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Servicos />} />
+    </Route>
+    <Route path="/relatorios" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Relatorios />} />
+    </Route>
+    <Route path="/configuracoes" element={
+      <ProtectedRoute requiresSubscription={true}>
+        <AppLayout />
+      </ProtectedRoute>
+    }>
+      <Route index element={<Configuracoes />} />
+    </Route>
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/agendamento/:estabelecimentoId" element={<AgendamentoCliente />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Dashboard />} />
-            </Route>
-            <Route path="/agendamentos" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Agendamentos />} />
-            </Route>
-            <Route path="/profissionais" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Profissionais />} />
-            </Route>
-            <Route path="/servicos" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Servicos />} />
-            </Route>
-            <Route path="/relatorios" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Relatorios />} />
-            </Route>
-            <Route path="/configuracoes" element={
-              <ProtectedRoute requiresSubscription={true}>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Configuracoes />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
