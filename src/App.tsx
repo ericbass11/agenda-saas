@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "./components/layout/AppLayout";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Agendamentos from "./pages/Agendamentos";
 import Profissionais from "./pages/Profissionais";
@@ -23,6 +25,8 @@ const queryClient = new QueryClient();
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Index />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/signup" element={<Signup />} />
     <Route path="/pricing" element={<Pricing />} />
     <Route path="/agendamento/:estabelecimentoId" element={<AgendamentoCliente />} />
     <Route path="/dashboard" element={

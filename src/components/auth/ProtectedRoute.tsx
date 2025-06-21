@@ -31,8 +31,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!user) {
-    console.log('ProtectedRoute: no user, redirecting to home');
-    return <Navigate to="/" replace />;
+    console.log('ProtectedRoute: no user, redirecting to login');
+    return <Navigate to="/login" replace />;
   }
 
   // Se requer assinatura e o usuário não tem assinatura ativa
