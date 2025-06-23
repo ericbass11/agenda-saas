@@ -30,6 +30,19 @@ export const useSubscription = () => {
       return;
     }
 
+    // Check for dev mode override
+    const devOverride = localStorage.getItem('dev-subscription-override') === 'true';
+    if (devOverride && !import.meta.env.PROD) {
+      console.log('Dev mode: subscription check overridden');
+      setSubscription({
+        subscribed: true,
+        subscription_tier: 'Premium',
+        subscription_end: null,
+        loading: false,
+      });
+      return;
+    }
+
     try {
       setSubscription(prev => ({ ...prev, loading: true }));
       

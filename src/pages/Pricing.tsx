@@ -7,24 +7,27 @@ import { Check, Crown, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Pricing = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async () => {
     if (!user) {
       toast({
         title: "Login necessário",
         description: "Você precisa estar logado para assinar um plano.",
         variant: "destructive",
       });
+      navigate('/login');
       return;
     }
 
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId }
+        body: { priceId: 'agendamento_facil' }
       });
 
       if (error) throw error;
@@ -41,25 +44,21 @@ const Pricing = () => {
     }
   };
 
-  const plans = [
-    {
-      name: "Agendamento Fácil",
-      price: "69,90",
-      priceId: "price_agendamento_facil", // Será substituído pelo ID real do Stripe
-      description: "Solução completa para seu negócio",
-      features: [
-        "Agendamentos ilimitados",
-        "Profissionais ilimitados",
-        "Notificações WhatsApp automáticas",
-        "Dashboard executivo completo",
-        "Relatórios detalhados",
-        "Gestão de clientes",
-        "Link de agendamento personalizado",
-        "Suporte prioritário"
-      ],
-      popular: true
-    }
-  ];
+  const plan = {
+    name: "Agendamento Fácil",
+    price: "69,90",
+    description: "Solução completa para seu negócio",
+    features: [
+      "Agendamentos ilimitados",
+      "Profissionais ilimitados",
+      "Notificações WhatsApp automáticas",
+      "Dashboard executivo completo",
+      "Relatórios detalhados",
+      "Gestão de clientes",
+      "Link de agendamento personalizado",
+      "Suporte prioritário"
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
@@ -74,45 +73,43 @@ const Pricing = () => {
         </div>
 
         <div className="max-w-md mx-auto">
-          {plans.map((plan) => (
-            <Card key={plan.name} className="relative border-primary shadow-xl">
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
-                <Star className="w-3 h-3 mr-1" />
-                Plano Completo
-              </Badge>
-              
-              <CardHeader className="text-center pb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <Crown className="w-8 h-8 text-primary" />
-                </div>
-                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ {plan.price}</span>
-                  <span className="text-gray-500">/mês</span>
-                </div>
-                <p className="text-gray-600 mt-2">{plan.description}</p>
-              </CardHeader>
+          <Card className="relative border-primary shadow-xl">
+            <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
+              <Star className="w-3 h-3 mr-1" />
+              Plano Completo
+            </Badge>
+            
+            <CardHeader className="text-center pb-6">
+              <div className="flex items-center justify-center mb-4">
+                <Crown className="w-8 h-8 text-primary" />
+              </div>
+              <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+              <div className="mt-4">
+                <span className="text-4xl font-bold">R$ {plan.price}</span>
+                <span className="text-gray-500">/mês</span>
+              </div>
+              <p className="text-gray-600 mt-2">{plan.description}</p>
+            </CardHeader>
 
-              <CardContent>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+            <CardContent>
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                    <span className="text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                  onClick={() => handleSubscribe(plan.priceId)}
-                >
-                  {user ? 'Assinar Agora' : 'Faça Login para Assinar'}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+              <Button 
+                className="w-full" 
+                size="lg"
+                onClick={handleSubscribe}
+              >
+                {user ? 'Assinar Agora' : 'Faça Login para Assinar'}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="text-center mt-12">
