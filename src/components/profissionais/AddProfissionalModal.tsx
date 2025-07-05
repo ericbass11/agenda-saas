@@ -188,7 +188,7 @@ export function AddProfissionalModal({ onAddProfissional }: AddProfissionalModal
                         <Label htmlFor={servico.nome} className="text-sm font-normal">
                           {servico.nome}
                           <span className="text-xs text-gray-500 ml-2">
-                            ({servico.duracao} - {servico.preco})
+                            ({servico.duracao_minutos} min - R$ {servico.preco.toFixed(2)})
                           </span>
                         </Label>
                       </div>

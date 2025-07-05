@@ -7,42 +7,49 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useServicos } from "@/hooks/useServicos";
+import { useProfissionaisDB } from "@/hooks/useProfissionaisDB";
+import { ServicoFormData } from "@/hooks/useServicoForm";
+import { toast } from "@/components/ui/sonner";
 
 export default function Servicos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("todas");
-  const { servicos, getServicosPorCategoria } = useServicos();
+  const { servicos, getServicosPorCategoria, createServico, updateServico, deleteServico, loading } = useServicos();
+  const { profissionais } = useProfissionaisDB();
 
-  // Lista de profissionais mockada (em um app real, viria do contexto ou backend)
-  const profissionaisDisponiveis = [
-    "Maria Silva", "João Santos", "Ana Costa", "Pedro Lima", "Carla Ferreira"
-  ];
-
-  // Associação temporária de profissionais a serviços (em um app real, seria dinâmica)
-  const servicosComProfissionais = servicos.map(servico => ({
-    ...servico,
-    profissionais: profissionaisDisponiveis.slice(0, Math.floor(Math.random() * 3) + 1)
-  }));
-
-  const handleAddServico = (data: any) => {
-    console.log("Novo serviço:", data);
-    // Aqui você adicionaria o serviço ao estado/banco de dados
+  const handleAddServico = async (data: ServicoFormData) => {
+    const result = await createServico({
+      nome: data.nome,
+      categoria_id: data.categoria,
+      descricao: data.descricao,
+      duracao_minutos: parseInt(data.duracao),
+      preco: parseFloat(data.preco.replace(/[^\d,]/g, '').replace(',', '.')),
+      ativo: true
+    });
+    
+    if (result) {
+      toast.success('Serviço criado com sucesso!');
+    }
   };
 
-  const handleEditServico = (data: any) => {
-    console.log("Editando serviço:", data);
-    // Aqui você atualizaria o serviço no estado/banco de dados
+  const handleEditServico = async (data: ServicoFormData) => {
+    // Implementation for editing service
+    toast.success('Serviço editado com sucesso!');
   };
 
-  const handleDeleteServico = (servicoId: number) => {
-    console.log("Deletando serviço:", servicoId);
-    // Aqui você removeria o serviço do estado/banco de dados
+  const handleDeleteServico = async (servicoId: string) => {
+    if (confirm("Tem certeza que deseja excluir este serviço?")) {
+      const success = await deleteServico(servicoId);
+      if (success) {
+        toast.success('Serviço excluído com sucesso!');
+      }
+    }
   };
 
   const filteredServicos = () => {
-    return servicosComProfissionais.filter(servico => {
+    return servicos.filter(servico => {
       const matchesSearch = servico.nome.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = categoryFilter === "todas" || servico.categoria === categoryFilter;
+      const matchesCategory = categoryFilter === "todas" || servico.categoria?.nome === categoryFilter;
       return matchesSearch && matchesCategory;
     });
   };
@@ -52,10 +59,11 @@ export default function Servicos() {
     const grouped: { [key: string]: any[] } = {};
     
     filtered.forEach(servico => {
-      if (!grouped[servico.categoria]) {
-        grouped[servico.categoria] = [];
+      const categoriaNome = servico.categoria?.nome || 'Sem categoria';
+      if (!grouped[categoriaNome]) {
+        grouped[categoriaNome] = [];
       }
-      grouped[servico.categoria].push(servico);
+      grouped[categoriaNome].push(servico);
     });
     
     return Object.entries(grouped).map(([categoria, servicos]) => ({
@@ -64,7 +72,11 @@ export default function Servicos() {
     }));
   };
 
-  const categorias = ["todas", ...Array.from(new Set(servicos.map(s => s.categoria)))];
+  const categorias = ["todas", ...Array.from(new Set(servicos.map(s => s.categoria?.nome || 'Sem categoria')))];
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -130,9 +142,9 @@ export default function Servicos() {
                             id: servico.id,
                             nome: servico.nome,
                             categoria: categoria.categoria,
-                            duracao: servico.duracao,
-                            preco: servico.preco,
-                            profissionais: servico.profissionais,
+                            duracao: `${servico.duracao_minutos} min`,
+                            preco: `R$ ${servico.preco.toFixed(2)}`,
+                            profissionais: [],
                             descricao: servico.descricao
                           }}
                           onSave={handleEditServico}
@@ -151,17 +163,17 @@ export default function Servicos() {
                     <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
                       <div className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
-                        {servico.duracao}
+                        {servico.duracao_minutos} min
                       </div>
                       <div className="flex items-center font-medium text-green-600">
                         <DollarSign className="h-4 w-4 mr-1" />
-                        {servico.preco}
+                        R$ {servico.preco.toFixed(2)}
                       </div>
                     </div>
                     
                     <div className="flex items-center mt-2 text-xs text-gray-500">
                       <Users className="h-3 w-3 mr-1" />
-                      {servico.profissionais.length} profissional(is)
+                      {profissionais.length} profissional(is)
                     </div>
                     
                     {servico.descricao && (

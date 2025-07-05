@@ -1,49 +1,184 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useEstabelecimento } from './useEstabelecimento';
+import { useCategorias } from './useCategorias';
+import { toast } from '@/components/ui/sonner';
 
 export interface Servico {
-  id: number;
+  id: string;
+  estabelecimento_id: string;
+  categoria_id?: string;
   nome: string;
-  categoria: string;
-  duracao: string;
-  preco: string;
   descricao?: string;
+  duracao_minutos: number;
+  preco: number;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+  categoria?: {
+    nome: string;
+  };
 }
 
-// Dados iniciais dos serviços (em um app real, viria do backend)
-const servicosIniciais = [
-  { id: 1, nome: "Corte Feminino", categoria: "Cabelo", duracao: "60 min", preco: "R$ 80,00", descricao: "Corte personalizado para cabelos femininos" },
-  { id: 2, nome: "Corte Masculino", categoria: "Cabelo", duracao: "40 min", preco: "R$ 50,00", descricao: "Corte clássico masculino" },
-  { id: 3, nome: "Escova", categoria: "Cabelo", duracao: "45 min", preco: "R$ 60,00" },
-  { id: 4, nome: "Coloração", categoria: "Cabelo", duracao: "120 min", preco: "R$ 180,00" },
-  { id: 5, nome: "Manicure", categoria: "Unhas", duracao: "45 min", preco: "R$ 35,00" },
-  { id: 6, nome: "Pedicure", categoria: "Unhas", duracao: "60 min", preco: "R$ 45,00" },
-  { id: 7, nome: "Nail Art", categoria: "Unhas", duracao: "30 min", preco: "R$ 25,00" },
-  { id: 8, nome: "Barba Simples", categoria: "Barba", duracao: "30 min", preco: "R$ 30,00" },
-  { id: 9, nome: "Barba + Bigode", categoria: "Barba", duracao: "45 min", preco: "R$ 40,00" },
-];
+export interface ServicoInput {
+  nome: string;
+  categoria_id?: string;
+  descricao?: string;
+  duracao_minutos: number;
+  preco: number;
+  ativo?: boolean;
+}
 
 export function useServicos() {
-  const [servicos] = useState<Servico[]>(servicosIniciais);
+  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { estabelecimento } = useEstabelecimento();
+  const { categorias } = useCategorias();
+
+  const fetchServicos = async () => {
+    if (!estabelecimento) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('servicos')
+        .select(`
+          *,
+          categoria:categorias_servicos(nome)
+        `)
+        .eq('estabelecimento_id', estabelecimento.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching servicos:', error);
+        toast.error('Erro ao carregar serviços');
+        return;
+      }
+
+      setServicos(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erro ao carregar serviços');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createServico = async (data: ServicoInput) => {
+    if (!estabelecimento) return null;
+
+    try {
+      const { data: newServico, error } = await supabase
+        .from('servicos')
+        .insert([{
+          ...data,
+          estabelecimento_id: estabelecimento.id
+        }])
+        .select(`
+          *,
+          categoria:categorias_servicos(nome)
+        `)
+        .single();
+
+      if (error) {
+        console.error('Error creating servico:', error);
+        toast.error('Erro ao criar serviço');
+        return null;
+      }
+
+      setServicos(prev => [newServico, ...prev]);
+      toast.success('Serviço criado com sucesso!');
+      return newServico;
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erro ao criar serviço');
+      return null;
+    }
+  };
+
+  const updateServico = async (id: string, data: Partial<ServicoInput>) => {
+    try {
+      const { data: updatedServico, error } = await supabase
+        .from('servicos')
+        .update(data)
+        .eq('id', id)
+        .select(`
+          *,
+          categoria:categorias_servicos(nome)
+        `)
+        .single();
+
+      if (error) {
+        console.error('Error updating servico:', error);
+        toast.error('Erro ao atualizar serviço');
+        return null;
+      }
+
+      setServicos(prev => 
+        prev.map(s => s.id === id ? updatedServico : s)
+      );
+      toast.success('Serviço atualizado com sucesso!');
+      return updatedServico;
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erro ao atualizar serviço');
+      return null;
+    }
+  };
+
+  const deleteServico = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('servicos')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting servico:', error);
+        toast.error('Erro ao excluir serviço');
+        return false;
+      }
+
+      setServicos(prev => prev.filter(s => s.id !== id));
+      toast.success('Serviço excluído com sucesso!');
+      return true;
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Erro ao excluir serviço');
+      return false;
+    }
+  };
 
   const getServicosAsEspecialidades = () => {
     return servicos.map(servico => servico.nome);
   };
 
   const getServicosPorCategoria = () => {
-    const categorias: { [key: string]: Servico[] } = {};
+    const categoriasPorNome: { [key: string]: Servico[] } = {};
     servicos.forEach(servico => {
-      if (!categorias[servico.categoria]) {
-        categorias[servico.categoria] = [];
+      const nomeCategoria = servico.categoria?.nome || 'Sem categoria';
+      if (!categoriasPorNome[nomeCategoria]) {
+        categoriasPorNome[nomeCategoria] = [];
       }
-      categorias[servico.categoria].push(servico);
+      categoriasPorNome[nomeCategoria].push(servico);
     });
-    return categorias;
+    return categoriasPorNome;
   };
+
+  useEffect(() => {
+    if (estabelecimento) {
+      fetchServicos();
+    }
+  }, [estabelecimento]);
 
   return {
     servicos,
+    loading,
+    createServico,
+    updateServico,
+    deleteServico,
     getServicosAsEspecialidades,
-    getServicosPorCategoria
+    getServicosPorCategoria,
+    refetch: fetchServicos
   };
 }

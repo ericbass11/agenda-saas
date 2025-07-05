@@ -9,24 +9,24 @@ import { useCategorias } from "@/hooks/useCategorias";
 export function CategoriasManager() {
   const { categorias, addCategoria, updateCategoria, deleteCategoria } = useCategorias();
   const [novaCategoria, setNovaCategoria] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editingNome, setEditingNome] = useState("");
 
-  const handleAddCategoria = () => {
+  const handleAddCategoria = async () => {
     if (novaCategoria.trim()) {
-      addCategoria(novaCategoria.trim());
+      await addCategoria(novaCategoria.trim());
       setNovaCategoria("");
     }
   };
 
-  const startEditing = (id: number, nome: string) => {
+  const startEditing = (id: string, nome: string) => {
     setEditingId(id);
     setEditingNome(nome);
   };
 
-  const confirmEdit = () => {
+  const confirmEdit = async () => {
     if (editingId && editingNome.trim()) {
-      updateCategoria(editingId, editingNome.trim());
+      await updateCategoria(editingId, editingNome.trim());
       setEditingId(null);
       setEditingNome("");
     }
@@ -37,9 +37,9 @@ export function CategoriasManager() {
     setEditingNome("");
   };
 
-  const handleDeleteCategoria = (id: number) => {
+  const handleDeleteCategoria = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta categoria?")) {
-      deleteCategoria(id);
+      await deleteCategoria(id);
     }
   };
 

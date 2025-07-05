@@ -10,14 +10,14 @@ import { useToast } from "@/hooks/use-toast";
 export function CategoriasModal() {
   const { categorias, addCategoria, updateCategoria, deleteCategoria } = useCategorias();
   const [novaCategoria, setNovaCategoria] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editingNome, setEditingNome] = useState("");
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleAddCategoria = () => {
+  const handleAddCategoria = async () => {
     if (novaCategoria.trim()) {
-      addCategoria(novaCategoria.trim());
+      await addCategoria(novaCategoria.trim());
       setNovaCategoria("");
       toast({
         title: "Categoria adicionada",
@@ -26,14 +26,14 @@ export function CategoriasModal() {
     }
   };
 
-  const startEditing = (id: number, nome: string) => {
+  const startEditing = (id: string, nome: string) => {
     setEditingId(id);
     setEditingNome(nome);
   };
 
-  const confirmEdit = () => {
+  const confirmEdit = async () => {
     if (editingId && editingNome.trim()) {
-      updateCategoria(editingId, editingNome.trim());
+      await updateCategoria(editingId, editingNome.trim());
       setEditingId(null);
       setEditingNome("");
       toast({
@@ -48,9 +48,9 @@ export function CategoriasModal() {
     setEditingNome("");
   };
 
-  const handleDeleteCategoria = (id: number, nome: string) => {
+  const handleDeleteCategoria = async (id: string, nome: string) => {
     if (confirm(`Tem certeza que deseja excluir a categoria "${nome}"?`)) {
-      deleteCategoria(id);
+      await deleteCategoria(id);
       toast({
         title: "Categoria excluída",
         description: `A categoria "${nome}" foi removida com sucesso.`
