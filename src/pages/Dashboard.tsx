@@ -1,8 +1,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Users, DollarSign, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Users, DollarSign, Clock, CreditCard } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
+import { useSubscription } from "@/hooks/useSubscription";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const agendamentosData = [
   { dia: "Seg", agendamentos: 12 },
@@ -22,12 +26,76 @@ const chartConfig = {
 };
 
 export default function Dashboard() {
+  const { subscribed, subscription_tier, subscription_end, refreshSubscription } = useSubscription();
+  const { toast } = useToast();
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) throw error;
+      
+      // Open customer portal in a new tab
+      window.open(data.url, '_blank');
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível abrir o portal de gerenciamento. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-        <p className="text-gray-600 mt-2">Visão geral do seu negócio</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
+          <p className="text-gray-600 mt-2">Visão geral do seu negócio</p>
+        </div>
+        {subscribed && (
+          <Button 
+            onClick={handleManageSubscription}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <CreditCard className="h-4 w-4" />
+            Gerenciar Assinatura
+          </Button>
+        )}
       </div>
+
+      {/* Status da Assinatura */}
+      {subscribed && (
+        <Card className="border-green-200 bg-green-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div>
+                  <p className="font-medium text-green-800">
+                    Assinatura Ativa - {subscription_tier}
+                  </p>
+                  {subscription_end && (
+                    <p className="text-sm text-green-600">
+                      Próxima cobrança: {new Date(subscription_end).toLocaleDateString('pt-BR')}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={refreshSubscription}
+                className="text-green-700 hover:text-green-800"
+              >
+                Atualizar Status
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Métricas principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
