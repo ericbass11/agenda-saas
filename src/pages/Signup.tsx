@@ -22,7 +22,7 @@ const signupSchema = z.object({
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function Signup() {
-  const { signUp } = useAuth();
+  const { signUp, isSupabaseHealthy, checkHealth } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,7 +48,20 @@ export default function Signup() {
       navigate("/pricing");
     } catch (error: any) {
       console.error("Signup error:", error);
-      toast.error(error.message || "Erro ao criar conta. Tente novamente.");
+      const errorMessage = error.message || "Erro ao criar conta. Tente novamente.";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRetryConnection = async () => {
+    setIsLoading(true);
+    try {
+      await checkHealth();
+      toast.success("Conexão reestabelecida!");
+    } catch (error) {
+      toast.error("Ainda não foi possível conectar. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -69,6 +82,24 @@ export default function Signup() {
         <Card>
           <CardHeader>
             <CardTitle>Cadastro</CardTitle>
+            {!isSupabaseHealthy && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
+                <div className="flex items-center">
+                  <div className="text-yellow-800 text-sm">
+                    ⚠️ Serviço temporariamente indisponível. 
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      onClick={handleRetryConnection}
+                      disabled={isLoading}
+                      className="p-0 h-auto ml-1 text-yellow-800 underline"
+                    >
+                      Tentar novamente
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -140,7 +171,11 @@ export default function Signup() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || !isSupabaseHealthy}
+              >
                 {isLoading ? "Cadastrando..." : "Criar Conta"}
               </Button>
             </form>
