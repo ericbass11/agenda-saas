@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initializeAuth = async () => {
       try {
         // First check Supabase health
-        const healthCheck = await checkSupabaseHealth("https://hpwukunqxylrvnicabsk.supabase.co");
+        const healthCheck = await checkSupabaseHealth(import.meta.env.VITE_SUPABASE_URL);
         setIsSupabaseHealthy(healthCheck.isHealthy);
         
         if (!healthCheck.isHealthy) {
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkHealth = async () => {
-    const healthCheck = await checkSupabaseHealth("https://hpwukunqxylrvnicabsk.supabase.co");
+    const healthCheck = await checkSupabaseHealth(import.meta.env.VITE_SUPABASE_URL);
     setIsSupabaseHealthy(healthCheck.isHealthy);
     return healthCheck;
   };
