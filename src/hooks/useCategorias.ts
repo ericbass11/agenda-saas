@@ -9,7 +9,6 @@ export interface Categoria {
   estabelecimento_id: string;
   nome: string;
   created_at: string;
-  updated_at: string;
 }
 
 export interface CategoriaInput {

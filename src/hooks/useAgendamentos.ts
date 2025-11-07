@@ -192,12 +192,11 @@ export function useAgendamentos() {
 
     try {
       const { data, error } = await supabase.rpc('check_horario_disponivel', {
-        _estabelecimento_id: estabelecimento.id,
-        _profissional_id: profissionalId,
-        _data_agendamento: dataAgendamento,
-        _hora_inicio: horaInicio,
-        _hora_fim: horaFim,
-        _agendamento_id: agendamentoId || null
+        p_profissional_id: profissionalId,
+        p_data_agendamento: dataAgendamento,
+        p_hora_inicio: horaInicio,
+        p_hora_fim: horaFim,
+        p_agendamento_id: agendamentoId || null
       });
 
       if (error) {
@@ -221,10 +220,9 @@ export function useAgendamentos() {
 
     try {
       const { data, error } = await supabase.rpc('get_horarios_disponiveis', {
-        _estabelecimento_id: estabelecimento.id,
-        _profissional_id: profissionalId,
-        _data_agendamento: dataAgendamento,
-        _duracao_minutos: duracaoMinutos
+        p_profissional_id: profissionalId,
+        p_data_agendamento: dataAgendamento,
+        p_duracao_minutos: duracaoMinutos
       });
 
       if (error) {

@@ -34,16 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // First check Supabase health
-        const healthCheck = await checkSupabaseHealth(import.meta.env.VITE_SUPABASE_URL);
-        setIsSupabaseHealthy(healthCheck.isHealthy);
-        
-        if (!healthCheck.isHealthy) {
-          console.warn('Supabase health check failed:', healthCheck.error);
-          setLoading(false);
-          return;
-        }
-
         // Get initial session
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
@@ -51,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         setSession(session);
         setUser(session?.user ?? null);
+        setIsSupabaseHealthy(true);
       } catch (error) {
         console.error('Error in initializeAuth:', error);
         setIsSupabaseHealthy(false);
@@ -75,21 +66,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkHealth = async () => {
-    const healthCheck = await checkSupabaseHealth(import.meta.env.VITE_SUPABASE_URL);
-    setIsSupabaseHealthy(healthCheck.isHealthy);
-    return healthCheck;
+    try {
+      await supabase.auth.getSession();
+      setIsSupabaseHealthy(true);
+      return { isHealthy: true };
+    } catch (error) {
+      setIsSupabaseHealthy(false);
+      return { isHealthy: false, error: 'Conexão falhou' };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
     console.log('Attempting sign up for:', email);
-    
-    // Check Supabase health before attempting signup
-    if (!isSupabaseHealthy) {
-      const healthCheck = await checkHealth();
-      if (!healthCheck.isHealthy) {
-        throw new Error('Serviço temporariamente indisponível. Tente novamente em alguns minutos.');
-      }
-    }
     
     const redirectUrl = `${window.location.origin}/`;
     
@@ -110,9 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Sign up successful');
     } catch (error: any) {
       if (error.message && !error.message.includes('Failed to fetch')) {
-        throw error; // Re-throw our friendly error
+        throw error;
       }
-      // Handle network errors
       const friendlyMessage = getConnectionErrorMessage(error);
       throw new Error(friendlyMessage);
     }
@@ -120,14 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     console.log('Attempting sign in for:', email);
-    
-    // Check Supabase health before attempting signin
-    if (!isSupabaseHealthy) {
-      const healthCheck = await checkHealth();
-      if (!healthCheck.isHealthy) {
-        throw new Error('Serviço temporariamente indisponível. Tente novamente em alguns minutos.');
-      }
-    }
     
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -142,9 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Sign in successful');
     } catch (error: any) {
       if (error.message && !error.message.includes('Failed to fetch')) {
-        throw error; // Re-throw our friendly error
+        throw error;
       }
-      // Handle network errors
       const friendlyMessage = getConnectionErrorMessage(error);
       throw new Error(friendlyMessage);
     }
